@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+#define CLR(x) memset(x,0,sizeof x)
+using namespace std;
+const int maxnnode=1000;
+const int maxn=1000;
+
+//字母表为全体小写字母的Trie 
+struct Trie{
+    int ch[maxnnode][26];
+    int val[maxnnode];
+    int sz;//节点总数 
+    void Clear(){sz=1;CLR(ch[0]);CLR(val);}//初始时只有一个根节点 
+    int idx(char c){return c-'a';}//字符c的编号 
+    void Insert(const char*s,int v){
+        int u=0,n=strlen(s);
+        for(int i=0;i<n;i++){
+            int c=idx(s[i]);
+            if(!ch[u][c])//创建新的节点 
+            {
+                CLR(ch[sz]);
+                val[sz]=0;//过程中的节点为0 
+                ch[u][c]=sz++;//新建节点的编号 
+            }
+            u=ch[u][c];//往下走 
+        }
+        val[u]=v;//给插入的字符串的最后一个字符附加信息为v 
+    }
+    bool Find(const char* s){
+        int u=0,n=strlen(s);
+        for(int i=0;i<n-1;i++){
+            int c=idx(s[i]);
+            if(!ch[u][c]) return false;//没有当前节点。表示不存在 
+            u=ch[u][c];
+        }
+        int c=idx(s[n-1]);
+        if(val[ch[u][c]]) return true;//判断最后一个节点是过程节点，还是终节点 
+        return false;
+    }
+};
+
+Trie T;
+
+int main()
+{
+    T.Clear();
+    int n,m;
+    scanf("%d%d",&n,&m);
+    char tmp[maxn];
+    for(int i=1;i<=n;i++)
+    {
+        scanf("%s",tmp);
+        T.Insert(tmp,i);
+    }
+    for(int i=1;i<=m;i++)
+    {
+        scanf("%s",tmp);
+        if(T.Find(tmp)) printf("Found!\n");
+        else            printf("Not Found!\n");
+    }
+    return 0;
+}
